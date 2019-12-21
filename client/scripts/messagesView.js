@@ -18,16 +18,18 @@ var MessagesView = {
       '<div>' +
       // '<%= createdAt %>' +
       // '<%= updatedAt %>' +
-      '<%= username %>' +
-      '<%= text %>' +
+      '<%- username %>' +
+      '<%- text %>' +
       '</div>'
     );
     var html ='';
-    for (let i = 0; i < data.results.length; i++) {
-      if(data.results[i].username === undefined) { continue; };
-      if(data.results[i].text === undefined) { continue; };
-      html += rendered(data.results[i]);
+    //       html += rendered(data.results[i]);
+
+    // iterate through Messages object here not data
+    for(let i = 0; i < Messages.stream.length; i++) {
+      html += rendered(Messages.stream[i]);
     }
+
     $('#chats').html(html);
   }
 
