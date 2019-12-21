@@ -20,8 +20,12 @@ var App = {
   fetch: function(callback = ()=>{}) {
     Parse.readAll((data) => {
       // examine the response from the server request:
+      // console.log(data);
+      // print messages on screen
+      // var newdata = JSON.stringify(data);
+      // data = JSON.parse(newdata);
       console.log(data);
-
+      MessagesView.render(data);
       callback();
     });
   },

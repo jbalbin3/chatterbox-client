@@ -9,8 +9,16 @@ var FormView = {
   handleSubmit: function(event) {
     // Stop the browser from submitting the form
     event.preventDefault();
-    
-    console.log('click!');
+    Messages.text = $('#message').val();
+    var equalIndex = window.location.search.indexOf('=');
+    Messages.username = window.location.search.slice(equalIndex + 1);
+
+    Parse.create(Messages,function () {
+      App.startSpinner();
+      App.fetch(App.stopSpinner);
+      console.log('chatterbox: Message sent');
+    });
+
   },
 
   setStatus: function(active) {
