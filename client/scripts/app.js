@@ -4,21 +4,21 @@ var App = {
 
   username: 'anonymous',
 
-  initialize: function() {
+  initialize: function () {
     App.username = window.location.search.substr(10);
 
     // Fetch initial batch of messages
     App.startSpinner();
-    App.fetch(function() {
-          FormView.initialize();
-          RoomsView.initialize();
-          MessagesView.initialize();
-          App.stopSpinner;
+    App.fetch(function () {
+      FormView.initialize();
+      RoomsView.initialize();
+      MessagesView.initialize();
+      App.stopSpinner();
     });
 
   },
 
-  fetch: function(callback = ()=>{}) {
+  fetch: function (callback = () => { }) {
     Parse.readAll((data) => {
       // examine the response from the server request:
       // console.log(data);
@@ -30,41 +30,48 @@ var App = {
       // our view/render stuff just looks at the objects above
       App.buildMessages(data);
       App.buildRooms(data);
-      MessagesView.render(data);
+      App.buildFriends(data);
+      if (FormView.selectedRoom !== '') {
+        RoomsView.render();
+      } else {
+        MessagesView.render();
+      };
       callback();
       // check new messages every 5 seconds
       setTimeout(App.fetch, 5000);
     });
   },
 
-  startSpinner: function() {
+  startSpinner: function () {
     App.$spinner.show();
     FormView.setStatus(true);
   },
 
-  stopSpinner: function() {
+  stopSpinner: function () {
     App.$spinner.fadeOut('fast');
     FormView.setStatus(false);
   },
 
-  buildMessages: function(data) {
+  buildMessages: function (data) {
     // for (let i = 0; i < data.results.length; i++) {
     //   if(data.results[i].username === undefined) { continue; };
     //   if(data.results[i].text === undefined) { continue; };
 
     // }
+    Messages.stream = [];
     for (let i = 0; i < data.results.length; i++) {
-      if(data.results[i].username === undefined) { continue; };
-      if(data.results[i].text === undefined) { continue; };
+      if (data.results[i].username === undefined) { continue; };
+      if (data.results[i].text === undefined) { continue; };
       Messages.stream.push(data.results[i]);
     }
   },
 
-  buildRooms: function(data) {
+  buildRooms: function (data) {
     // roomname1: {room: roomname1, stream: []}
+    Rooms = {};
     for (let i = 0; i < data.results.length; i++) {
-      if(data.results[i].roomname === undefined) { continue; };
-      if(Rooms[data.results[i].roomname]) {
+      if (data.results[i].roomname === undefined) { continue; };
+      if (Rooms[data.results[i].roomname]) {
         Rooms[data.results[i].roomname].stream.push(data.results[i]);
       } else {
         Rooms[data.results[i].roomname] = {
@@ -73,6 +80,17 @@ var App = {
         }
       }
     }
-    console.log('buildrooms ',Rooms);
-  }
+    // console.log('buildrooms ',Rooms);
+  },
+
+  buildFriends: function (data) {
+    // roomname1: {room: roomname1, stream: []}
+    console.log('friends ',Friends);
+    for (let i = 0; i < data.results.length; i++) {
+      if (data.results[i].username === undefined) { continue; };
+        if(!Friends[data.results[i].username]) {
+          Friends[data.results[i].username] = false;
+        }
+      }
+    }
 };

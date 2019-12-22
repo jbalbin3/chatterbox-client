@@ -2,10 +2,10 @@ var MessagesView = {
 
   $chats: $('#chats'),
 
-  initialize: function() {
+  initialize: function () {
   },
 
-  render: function(data) {
+  render: function () {
     // data is an array containing objects.
     // Array[0] example:
     // createdAt: "2019-12-20T23:55:32.773Z"
@@ -15,22 +15,37 @@ var MessagesView = {
     // updatedAt: "2019-12-20T23:55:32.773Z"
     // username: "I`M eighteen YEARS OLD"
     var rendered = _.template(
-      '<div>' +
-      // '<%= createdAt %>' +
-      // '<%= updatedAt %>' +
+      '<div onclick="Friends.toggleStatus(' + "'" +
+      '<%- username %>' + "'" +
+      ')">' +
       '<%- username %>' +
+      '</div>' +
+      '<div>' +
       '<%- text %>' +
       '</div>'
     );
-    var html ='';
+    var renderedBoldUser = _.template(
+      '<div onclick="Friends.toggleStatus(' + "'" +
+      '<%- username %>' + "'" +
+      ')">' +
+      '<%- username %>' +
+      '</div>' +
+      '<div style="font-weight: bold">' +
+      '<%- text %>' +
+      '</div>'
+    );
+    var html = '';
     //       html += rendered(data.results[i]);
 
     // iterate through Messages object here not data
-    for(let i = 0; i < Messages.stream.length; i++) {
-      html += rendered(Messages.stream[i]);
+    for (let i = 0; i < Messages.stream.length; i++) {
+      var uName = Messages.stream[i].username;
+      if (Friends[uName]) {
+        html += renderedBoldUser(Messages.stream[i]);
+      } else {
+        html += rendered(Messages.stream[i]);
+      }
+      $('#chats').html(html);
     }
-
-    $('#chats').html(html);
   }
-
 };
